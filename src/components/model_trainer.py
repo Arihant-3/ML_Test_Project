@@ -6,9 +6,9 @@ import numpy as np
 import pandas as pd
 
 from sklearn.ensemble import (
-    RandomForestClassifier,
-    GradientBoostingClassifier,
-    AdaBoostClassifier
+    RandomForestRegressor,
+    GradientBoostingRegressor,
+    AdaBoostRegressor
 )
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import r2_score
@@ -47,18 +47,53 @@ class ModelTrainer:
             )
             
             models = {
-                "Random Forest": RandomForestClassifier(),
-                "Gradient Boosting": GradientBoostingClassifier(),
-                "AdaBoost": AdaBoostClassifier(),
-                "KNN": KNeighborsRegressor(),
+                "Random Forest": RandomForestRegressor(),
+                "Gradient Boosting": GradientBoostingRegressor(),
+                "AdaBoost Regressor": AdaBoostRegressor(),
                 "Decision Tree": DecisionTreeRegressor(),
                 "Linear Regression": LinearRegression(),
-                "XGBoost": XGBRegressor()
+                "XGBRegressor": XGBRegressor()
             }
             
+            # Define hyperparameters for each model
+            params={
+                "Decision Tree": {
+                    'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
+                    # 'splitter':['best','random'],
+                    # 'max_features':['sqrt','log2'],
+                },
+                "Random Forest":{
+                    # 'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
+                 
+                    # 'max_features':['sqrt','log2',None],
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+                "Gradient Boosting":{
+                    # 'loss':['squared_error', 'huber', 'absolute_error', 'quantile'],
+                    'learning_rate':[.1,.01,.05,.001],
+                    'subsample':[0.6,0.7,0.75,0.8,0.85,0.9],
+                    # 'criterion':['squared_error', 'friedman_mse'],
+                    # 'max_features':['auto','sqrt','log2'],
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+                "Linear Regression":{},
+                "XGBRegressor":{
+                    'learning_rate':[.1,.01,.05,.001],
+                    'n_estimators': [8,16,32,64,128,256]
+                },
+                "AdaBoost Regressor":{
+                    'learning_rate':[.1,.01,0.5,.001],
+                    # 'loss':['linear','square','exponential'],
+                    'n_estimators': [8,16,32,64,128,256]
+                }
+                
+            }
+            logging.info("Initiating hyperparameter tuning and model evaluation")    
+            
             model_report: dict = evaluate_model(
-                X_train, y_train, X_test, y_test, models=models
+                X_train, y_train, X_test, y_test, models=models, params=params
             )
+            logging.info(f"Model Report: {model_report}")
             
             # To get the best model score from the model report
             best_model_score = max(sorted(model_report.values()))
