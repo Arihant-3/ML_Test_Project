@@ -76,3 +76,20 @@ def save_object(file_path, obj):
             
     except Exception as e:
         raise CustomException(e, sys)
+    
+def load_object(file_path):
+    """
+    Loads an object from a file using pandas.
+    
+    Parameters:
+    file_path (str): The path from which the object will be loaded.
+    
+    Returns:
+    any: The loaded object.
+    """
+    try:
+        with open(file_path, 'rb') as file_obj:
+            return dill.load(file_obj)
+        
+    except Exception as e:
+        raise CustomException(e, sys)
