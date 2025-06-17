@@ -2,7 +2,6 @@ from flask import Flask, request, render_template, jsonify
 import numpy as np 
 import pandas as pd 
 
-
 from sklearn.preprocessing import StandardScaler
 from src.pipeline.predict_pipeline import PredictPipeline, CustomData
 
@@ -28,6 +27,7 @@ def predict_datapoint():
             reading_score=float(request.form.get('writing_score')),
             writing_score=float(request.form.get('reading_score'))
             )
+        
         pred_df = data.get_data_as_dataframe()
         print(pred_df)
         
